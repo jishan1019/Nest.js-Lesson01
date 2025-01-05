@@ -9,6 +9,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -24,26 +26,23 @@ export class UsersController {
     return [];
   }
 
-  @Get(':id') // GET /users/:id
+  @Get(':id') // GET /users/:id`
   findOne(@Param('id') id: string) {
     return this.usersService.findOneFromDB(id);
   }
 
   @Post() // POST /users
-  createUser(@Body() payload: {}) {
-    return payload;
+  createUser(@Body() payload: CreateUserDto) {
+    return this.usersService.createUserFromDB(payload);
   }
 
   @Patch(':id') // PATCH /users/:id
-  updateUser(@Param('id') id: string, @Body() payload: {}) {
-    return {
-      id,
-      ...payload,
-    };
+  updateUser(@Param('id') id: string, @Body() payload: UpdateUserDto) {
+    return this.usersService.updateUserFromDB(id, payload);
   }
 
   @Delete(':id') // Delete /user/:id
   deleteUser(@Param('id') id: string) {
-    return { id };
+    return this.usersService.deleteUserFromDB(id);
   }
 }
