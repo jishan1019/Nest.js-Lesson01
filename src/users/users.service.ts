@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 
@@ -6,7 +6,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 export class UsersService {
   findAllFromDB(role?: 'admin' | 'user') {}
 
-  findOneFromDB(id: string) {}
+  findOneFromDB(id: string) {
+    if (!id) {
+      throw new NotFoundException('Id not found');
+    }
+  }
 
   createUserFromDB(user: CreateUserDto) {}
 
