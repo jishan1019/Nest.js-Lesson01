@@ -30,4 +30,23 @@ export class BookService {
 
     return result;
   }
+
+  async updateBookFromDb(id: string, payload: Book): Promise<Book> {
+    const result = await this.bookModel.findByIdAndUpdate(id, payload, {
+      new: true,
+      runValidators: true,
+    });
+
+    return result;
+  }
+
+  async deleteBookFromDb(id: string): Promise<Book> {
+    const result = await this.bookModel.findByIdAndDelete(id);
+
+    if (!result) {
+      throw new NotFoundException('Book not found');
+    }
+
+    return result;
+  }
 }
