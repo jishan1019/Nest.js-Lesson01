@@ -3,6 +3,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Book } from './schema/book.schema';
 import mongoose from 'mongoose';
 
+import { Query } from 'express-serve-static-core';
+import QueryBuilder from 'src/builder/QueryBuilder';
+import { PaginatedResult } from 'src/interface/pagination.interface';
+
 @Injectable()
 export class BookService {
   constructor(
@@ -10,10 +14,21 @@ export class BookService {
     private bookModel: mongoose.Model<Book>,
   ) {}
 
-  async findAllBookFromDB(): Promise<Book[]> {
-    const book = await this.bookModel.find();
+  async findAllBookFromDB(query: Query): Promise<PaginatedResult<Book>> {
+    const bookQuery = new QueryBuilder(this.bookModel.find(), query)
+      .search(['title', 'author']) // Pass the searchable fields
+      .filter()
+      .sort()
+      .paginate()
+      .fields();
 
-    return book;
+    const data = await bookQuery.modelQuery.exec(); // Execute the query
+    const meta = await bookQuery.countTotal(); // Get the total count
+
+    return {
+      meta,
+      data,
+    };
   }
 
   async createBookIntoDB(book: Book): Promise<Book> {

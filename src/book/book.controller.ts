@@ -6,19 +6,25 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { BookService } from './book.service';
 import { Book } from './schema/book.schema';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 
+import { Query as ExpressQuery } from 'express-serve-static-core';
+import { PaginatedResult } from 'src/interface/pagination.interface';
+
 @Controller('book')
 export class BookController {
   constructor(private bookService: BookService) {}
 
   @Get() // GET /book
-  async findAllBook(): Promise<Book[]> {
-    return this.bookService.findAllBookFromDB();
+  async findAllBook(
+    @Query() query: ExpressQuery,
+  ): Promise<PaginatedResult<Book>> {
+    return this.bookService.findAllBookFromDB(query);
   }
 
   @Get(':id')
